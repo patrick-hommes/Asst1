@@ -159,7 +159,6 @@ void myfree(void *memoryPtr, char *file, int line)
 		return;
 	}
 
-
 	// If the pointer is pointing to metaData and it isn't already free
 	// set the variable to free then attempts to clean up memory next to it.
 	////////////////////
@@ -167,26 +166,6 @@ void myfree(void *memoryPtr, char *file, int line)
 	{
 		ptr->isFree = 1;
 		merge();
-	}
-	//for testing...
-	//display();
-}
-
-//for testing....
-void display()
-{
-	metaData * iterptr = head;
-	while(iterptr != NULL)
-	{
-		//printf("size: %d\n", iterptr->currentSize);
-		printf("isFree: %d\n", iterptr->isFree);
-		if(iterptr->next == NULL)
-		{
-			printf("end of memory\n\n");
-		}
-
-		iterptr = iterptr->next;
-
 	}
 }
 
@@ -214,7 +193,7 @@ void errCollect(char * file, int line, int size, int code, int final){
 	int search1 = 0;
 	int search2 = 0;
 	int errNew = 0;
-	errFile[totalError]= file;
+	errFile[totalError] = file;
 	errLine[totalError] = line;
 	errCode[totalError] = code;
 	errSize[totalError] = size;
@@ -225,7 +204,6 @@ void errCollect(char * file, int line, int size, int code, int final){
 	////////////////////
 	
 	if (totalError == 0){
-		totalError++;
 		if (code == 0){
 			byteReq0++;
 			printf("User requested 0 bytes in file: %s, line: %d\n",file , line);
@@ -236,8 +214,8 @@ void errCollect(char * file, int line, int size, int code, int final){
 			overFlow = overFlow + errSize[totalError];
 		}
 		else if (code == 2){
-			printf("Tried to free NULL in file: %s, line: %d\n", file, line);
 			freeNull++;
+			printf("Tried to free NULL in file: %s, line: %d\n", file, line);
 		}
 		else if (code == 3){
 			noPointer++;
@@ -247,6 +225,7 @@ void errCollect(char * file, int line, int size, int code, int final){
 			alreadyFree++;
 			printf("Attempted to free a pointer already free in file: %s, line: %d\n", file, line);
 		}
+		totalError++;
 	}
 	
 	// Breaks down code errors then compares each file and line of same
@@ -255,70 +234,67 @@ void errCollect(char * file, int line, int size, int code, int final){
 	// has occured.
 	////////////////////
 	
-	else{
-
-		for (search1 = 0; search1 < totalError; search1++){
-			if (code == 0){
-				byteReq0++;
-				for (search2 = 0; search2 < totalError; search2++){
-					if (!((errFile[search2] == file) && (errLine[search2] == line) && (errCode[search2]) == code && (errSize[search2] == size))){
-						errNew++;
-					}
+	else if(totalError > 0){
+		if (code == 0){
+			byteReq0++;
+			for (search2 = 0; search2 <= totalError; search2++){
+				if (((errFile[search2] != file) && (errLine[search2] != line) && (errCode[search2]) != code && (errSize[search2] != size))){
+					errNew++;
 				}
-				if (errNew >= 1){
-					printf("User requested 0 bytes in file: %s, line: %d\n",file , line);
-				}
-				errNew = 0;				
 			}
-			else if (code == 1){
-				noAllocate++;
-				overFlow = overFlow + errSize[totalError];
-				for (search2 = 0; search2 <= totalError; search2++){
-					if (!((errFile[search2] == file) && (errLine[search2] == line) && (errCode[search2]) == code && (errSize[search2] == size))){
-						errNew++;
-					}
-				}	
-				if (errNew >= 1){
-					printf("Not enough memory to allocate %d bytes in file: %s, line: %d\n", size, file, line);
-				}
-				errNew = 0;
+			if (errNew >= 1){
+				printf("User requested 0 bytes in file: %s, line: %d\n",file , line);
 			}
-			else if (code == 2){
-				freeNull++;
-				for (search2 = 0; search2 < totalError; search2++){
-					if (!((errFile[search2] == file) && (errLine[search2] == line) && (errCode[search2]) == code && (errSize[search2] == size))){
-						errNew++;
-					}
+			errNew = 0;				
+		}
+		else if (code == 1){
+			noAllocate++;
+			overFlow = overFlow + errSize[totalError];
+			for (search2 = 0; search2 <= totalError; search2++){
+				if (((errFile[search2] != file) && (errLine[search2] != line) && (errCode[search2]) != code && (errSize[search2] != size))){
+					errNew++;
 				}
-				if (errNew >= 1){
-					printf("Tried to free NULL in file: %s, line: %d\n", file, line);
-				}
-				errNew = 0;
+			}	
+			if (errNew >= 1){
+				printf("Not enough memory to allocate %d bytes in file: %s, line: %d\n", size, file, line);
 			}
-			else if (code == 3){
-				noPointer++;
-				for (search2 = 0; search2 < totalError; search2++){
-					if (!((errFile[search2] == file) && (errLine[search2] == line) && (errCode[search2]) == code && (errSize[search2] == size))){
-						errNew++;
-					}
+			errNew = 0;
+		}
+		else if (code == 2){
+			freeNull++;
+			for (search2 = 0; search2 <= totalError; search2++){
+				if (((errFile[search2] != file) && (errLine[search2] != line) && (errCode[search2]) != code && (errSize[search2] != size))){
+					errNew++;
 				}
-				if (errNew >= 1){
-					printf("Pointer not allocted by a malloc call from file: %s, line: %d\n", file, line);
-				}
-				errNew = 0;
 			}
-			else if (code == 4){
-				alreadyFree++;
-				for (search2 = 0; search2 < totalError; search2++){
-					if (!((errFile[search2] == file) && (errLine[search2] == line) && (errCode[search2]) == code && (errSize[search2] == size))){
-						errNew++;
-					}
-				}
-				if (errNew >= 1){
-					printf("Attempted to free a pointer already free in file: %s, line: %d\n", file, line);
-				}
-				errNew = 0;
+			if (errNew >= 1){
+				printf("Tried to free NULL in file: %s, line: %d\n", file, line);
 			}
+			errNew = 0;
+		}
+		else if (code == 3){
+			noPointer++;
+			for (search2 = 0; search2 <= totalError; search2++){
+				if (((errFile[search2] != file) && (errLine[search2] != line) && (errCode[search2]) != code && (errSize[search2] != size))){
+					errNew++;
+				}
+			}
+			if (errNew >= 1){
+				printf("Pointer not allocted by a malloc call from file: %s, line: %d\n", file, line);
+			}
+			errNew = 0;
+		}
+		else if (code == 4){
+			alreadyFree++;
+			for (search2 = 0; search2 <= totalError; search2++){
+				if (((errFile[search2] != file) && (errLine[search2] != line) && (errCode[search2]) != code && (errSize[search2] != size))){
+					errNew++;
+				}
+			}
+			if (errNew >= 1){
+				printf("Attempted to free a pointer already free in file: %s, line: %d\n", file, line);
+			}
+			errNew = 0;
 		}
 	}
 	

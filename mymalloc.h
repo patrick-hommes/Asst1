@@ -15,7 +15,6 @@ typedef struct metaData
 
 void * mymalloc(size_t size, char * file, int line);
 void myfree(void *blockPtr, char * file, int line);
-void display();
 int valid(metaData * ptr);
 void createFirstBlock();
 void merge();
