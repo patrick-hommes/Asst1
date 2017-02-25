@@ -190,7 +190,6 @@ void merge()
 
 void errCollect(char * file, int line, int size, int code, int final){
 	
-	int search1 = 0;
 	int search2 = 0;
 	int errNew = 0;
 	errFile[totalError] = file;
@@ -237,7 +236,7 @@ void errCollect(char * file, int line, int size, int code, int final){
 	else if(totalError > 0){
 		if (code == 0){
 			byteReq0++;
-			for (search2 = 0; search2 <= totalError; search2++){
+			for (search2 = 0; search2 < totalError; search2++){
 				if (((errFile[search2] != file) && (errLine[search2] != line) && (errCode[search2]) != code && (errSize[search2] != size))){
 					errNew++;
 				}
@@ -250,7 +249,7 @@ void errCollect(char * file, int line, int size, int code, int final){
 		else if (code == 1){
 			noAllocate++;
 			overFlow = overFlow + errSize[totalError];
-			for (search2 = 0; search2 <= totalError; search2++){
+			for (search2 = 0; search2 < totalError; search2++){
 				if (((errFile[search2] != file) && (errLine[search2] != line) && (errCode[search2]) != code && (errSize[search2] != size))){
 					errNew++;
 				}
@@ -262,7 +261,7 @@ void errCollect(char * file, int line, int size, int code, int final){
 		}
 		else if (code == 2){
 			freeNull++;
-			for (search2 = 0; search2 <= totalError; search2++){
+			for (search2 = 0; search2 < totalError; search2++){
 				if (((errFile[search2] != file) && (errLine[search2] != line) && (errCode[search2]) != code && (errSize[search2] != size))){
 					errNew++;
 				}
@@ -274,7 +273,7 @@ void errCollect(char * file, int line, int size, int code, int final){
 		}
 		else if (code == 3){
 			noPointer++;
-			for (search2 = 0; search2 <= totalError; search2++){
+			for (search2 = 0; search2 < totalError; search2++){
 				if (((errFile[search2] != file) && (errLine[search2] != line) && (errCode[search2]) != code && (errSize[search2] != size))){
 					errNew++;
 				}
@@ -286,7 +285,7 @@ void errCollect(char * file, int line, int size, int code, int final){
 		}
 		else if (code == 4){
 			alreadyFree++;
-			for (search2 = 0; search2 <= totalError; search2++){
+			for (search2 = 0; search2 < totalError; search2++){
 				if (((errFile[search2] != file) && (errLine[search2] != line) && (errCode[search2]) != code && (errSize[search2] != size))){
 					errNew++;
 				}
@@ -322,5 +321,6 @@ void errCollect(char * file, int line, int size, int code, int final){
 		}
 		final = 0;
 		overFlow = 0;
+		totalError = 0;
 	}
 }
