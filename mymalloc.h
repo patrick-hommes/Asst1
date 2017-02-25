@@ -1,23 +1,23 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include <errno.h>
+#include <stdlib.h>
 #include <stddef.h>
 
-#define malloc( x ) myMalloc( x, __FILE__, __LINE__ )
-#define free( x ) myFree( x, __FILE__, __LINE__ )
+#define malloc( x ) mymalloc( x, __FILE__, __LINE__ )
+#define free( x ) myfree( x, __FILE__, __LINE__ )
+#define BLOCKSIZE 5000
 
-char myBlock[5000];
-
-typedef struct metaData{
-    size_t size;
-    int isFree;
-    struct metaData *next;
+typedef struct metaData
+{
+	struct metaData *next;
+	int isFree;
+	size_t currentSize;
 }metaData;
 
-metaData *blocksFree = (void*)myBlock;
-
+void * mymalloc(size_t size, char * file, int line);
+void myfree(void *blockPtr, char * file, int line);
+void display();
+int valid(metaData * ptr);
 void createFirstBlock();
-void split(metaData *whereBlock, size_t size);
-void *myMalloc(size_t bytesNeeded, char *file, int line);
 void merge();
-void myFree(void *blockPtr, char *file, int line);
+int withinBounds(void * ptr);
+void errCollect(char * file, int line, int size, int code, int final);
