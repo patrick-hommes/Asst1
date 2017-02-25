@@ -261,13 +261,14 @@ void errCollect(char * file, int line, int size, int code, int final){
 			if (code == 0){
 				byteReq0++;
 				for (search2 = 0; search2 < totalError; search2++){
-					if (!((errFile[search2] != file) && (errLine[search2] != line) && (errCode[search2]) != code && (errSize[search2] != size))){
+					if (!((errFile[search2] == file) && (errLine[search2] == line) && (errCode[search2]) == code && (errSize[search2] == size))){
 						errNew++;
 					}
 				}
 				if (errNew >= 1){
 					printf("User requested 0 bytes in file: %s, line: %d\n",file , line);
-				}	
+				}
+				errNew = 0;				
 			}
 			else if (code == 1){
 				noAllocate++;
@@ -280,39 +281,43 @@ void errCollect(char * file, int line, int size, int code, int final){
 				if (errNew >= 1){
 					printf("Not enough memory to allocate %d bytes in file: %s, line: %d\n", size, file, line);
 				}
+				errNew = 0;
 			}
 			else if (code == 2){
 				freeNull++;
 				for (search2 = 0; search2 < totalError; search2++){
-					if (!((errFile[search2] != file) && (errLine[search2] != line) && (errCode[search2]) != code && (errSize[search2] != size))){
+					if (!((errFile[search2] == file) && (errLine[search2] == line) && (errCode[search2]) == code && (errSize[search2] == size))){
 						errNew++;
 					}
 				}
 				if (errNew >= 1){
 					printf("Tried to free NULL in file: %s, line: %d\n", file, line);
 				}
+				errNew = 0;
 			}
 			else if (code == 3){
 				noPointer++;
 				for (search2 = 0; search2 < totalError; search2++){
-					if (!((errFile[search2] != file) && (errLine[search2] != line) && (errCode[search2]) != code && (errSize[search2] != size))){
+					if (!((errFile[search2] == file) && (errLine[search2] == line) && (errCode[search2]) == code && (errSize[search2] == size))){
 						errNew++;
 					}
 				}
 				if (errNew >= 1){
 					printf("Pointer not allocted by a malloc call from file: %s, line: %d\n", file, line);
 				}
+				errNew = 0;
 			}
 			else if (code == 4){
 				alreadyFree++;
 				for (search2 = 0; search2 < totalError; search2++){
-					if (!((errFile[search2] != file) && (errLine[search2] != line) && (errCode[search2]) != code && (errSize[search2] != size))){
+					if (!((errFile[search2] == file) && (errLine[search2] == line) && (errCode[search2]) == code && (errSize[search2] == size))){
 						errNew++;
 					}
 				}
 				if (errNew >= 1){
 					printf("Attempted to free a pointer already free in file: %s, line: %d\n", file, line);
 				}
+				errNew = 0;
 			}
 		}
 	}
@@ -331,7 +336,7 @@ void errCollect(char * file, int line, int size, int code, int final){
 		}
 		if (noAllocate > 0){
 			printf("User requested a total of %d bytes over %d attempts\n", overFlow, noAllocate);
-			printf("that could not be allocated in available space.\n");
+			printf("	that could not be allocated in available space.\n");
 		}
 		if (freeNull > 0){
 			printf("User attempted to free NULL %d times.\n", freeNull);
