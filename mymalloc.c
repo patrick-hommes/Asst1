@@ -206,25 +206,29 @@ void errCollect(char * file, int line, int size, int code, int final){
 		if (code == 0){
 			byteReq0++;
 			printf("User requested 0 bytes in file: %s, line: %d\n",file , line);
+			totalError++;
 		}
 		else if (code == 1){
 			noAllocate++;
 			printf("Not enough memory to allocate %d bytes in file: %s, line: %d\n", size, file, line);
 			overFlow = overFlow + errSize[totalError];
+			totalError++;
 		}
 		else if (code == 2){
 			freeNull++;
 			printf("Tried to free NULL in file: %s, line: %d\n", file, line);
+			totalError++;
 		}
 		else if (code == 3){
 			noPointer++;
 			printf("Pointer not allocted by a malloc call from file: %s, line: %d\n", file, line);
+			totalError++;
 		}
 		else if (code == 4){
 			alreadyFree++;
 			printf("Attempted to free a pointer already free in file: %s, line: %d\n", file, line);
+			totalError++;
 		}
-		totalError++;
 	}
 	
 	// Breaks down code errors then compares each file and line of same
@@ -297,7 +301,7 @@ void errCollect(char * file, int line, int size, int code, int final){
 		}
 	}
 	
-	// From test file  errCollect(0,0,0,0,1) signifies the end of a test
+	// From test file  errCollect(0,0,0,5,1) signifies the end of a test
 	// and all errors collected during the test are then reported in
 	// total.
 	////////////////////
@@ -322,5 +326,9 @@ void errCollect(char * file, int line, int size, int code, int final){
 		final = 0;
 		overFlow = 0;
 		totalError = 0;
+		byteReq0 = 0;
+		noAllocate = 0;
+		freeNull = 0;
+		alreadyFree = 0;
 	}
 }
