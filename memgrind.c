@@ -2,204 +2,262 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <errno.h>
-#include <string.h>
-#include <ctype.h>
-
+//#include <time.h>
 #include "mymalloc.h"
 
-int main(int argc, char *argv[]){
+//int getttimeofday(struct timeval *tv, struct timezone *tz);
 
-    int a1 = 0;
-    int a2 = 0;
-    int a3 = 0;
-    //int * testA;
-    int aMallocTotal = 0;
-    int aFreeTotal= 0;
-    //double aTimeTotal = 0;
-    int b1 = 0;
-    int b2 = 0;
-    int bMallocTotal = 0;
-    int bFreeTotal= 0;
-    int bTimeTotal = 0;
-    int c1 = 0;
-    int c2 = 0;
-    int c3 = 0;
-    int c4 = 0;
-    int cMallocTotal = 0;
-    int cFreeTotal= 0;
-    int cRandom = 0;
-    int cTimeTotal = 0;
-    int d1 = 0;
-    int d2 = 0;
-    int d3 = 0;
-    int d4 = 0;
-    int dMallocTotal = 0;
-    int dFreeTotal= 0;
-    int dRandomChoice = 0;
-    int dRandomSize = 0;
-    int dBytesTotal = 0;
-    int dAllMTotal = 0;
-    int dAllFTotal = 0;
-    int dTimeTotal = 0;
-    int e1 = 0;
-    int e2 = 0;
-    //int e3 = 0;
-    int eMallocTotal = 0;
-    int eFreeTotal= 0;
-    int eTimeTotal = 0;
-    int f1 = 0;
-    int f2 = 0;
-    //int f3 = 0;
-    int fMallocTotal = 0;
-    int fFreeTotal= 0;
-    int fTimeTotal = 0;
-    int testRuns = 99;
-    int mallocRuns = 999;
-    //time_t timer1;
-    //time_t timer2;
-    //struct timeval tv;
+int main(int argc, char * argv[]){
+    int a1 = 0, a2 = 0, a3 = 0;
+    char * testA[1000];
+    char * testB[1000];
+    char * testC[1000];
+    char * testD[1000];
+    char * testE[1000];
+    char * testF[1000];
+    int totalMalloc = 0, totalFree = 0, validMalloc = 0;
+    int randomNum = 0, randomNum2 = 0, totalSwap = 0;
+    int totalBytes = 0;
+    //struct timeval t0, t1;
+    //long elapsed;
+    //double average;
+    //long double total;
     
-    printf("Test A: malloc x 1000 then free x 1000...\n");
-    for (a1=0; a1 <= testRuns; a1++){
-        //timer1 = time(NULL);
-        for (a2=0; a2 <= mallocRuns; a2++){
-            //testA = (int*)malloc(1);
-            aMallocTotal++;
-            printf("Added %d", a2);
-        }
-        for (a3=mallocRuns; a3 >= 0; a3--){
-            //free(testA);
-            aFreeTotal++;
-        }
-        //timer2 = time(NULL);
-        //aTimeTotal = (aTimeTotal + difftime(timer2, timer1));
-    } //Test a
-    //aTimeTotal = aTimeTotal/100;
-    printf("Total malloc calls: %d.  Total free calls: %d\n", aMallocTotal, aFreeTotal);
-    //printf("Mean time for 100 executions: %d\n\n", aTimeTotal);
+    printf("\n\nTest A - (malloc * 1000 then free * 1000) * 100...\n\n");
     
-    printf("Test B: malloc then free x 1000...\n");
-    for (b1=0; b1 <= testRuns; b1++){
-        for (b2=0; b2 <= mallocRuns; b2++){
-            //testA = (int*)malloc(1);
-            bMallocTotal++;
-            //free(testA);
-            bFreeTotal++;
-        }
-        printf("------test %d\n", b1);
-        //timer of total time take for each ieration of 100 test b
-    }//Test b
-    bTimeTotal = bTimeTotal/100;
-    printf("Total malloc calls: %d.  Total free calls: %d\n", bMallocTotal, bFreeTotal);
-    printf("Mean time for 100 executions: %d\n\n", bTimeTotal);
-    
-    printf("Test C: random 1 byte malloc or free x 1000...\n");
-    for (c1=0; c1 <= testRuns; c1++){
-        for (c2=0; c2 <= mallocRuns; c2++){
-            cRandom = rand() % 100 + 1;
-            if (cRandom <= 50){
-            //malloc one bit
-            cMallocTotal++;
+    for(a1 = 0; a1 < 100; a1++){
+        //gettimeofday(&t0, 0);
+        int countMalloc = 0, countNull = 0;  //initialize in loop counters
+        for (a2 = 0; a2 < 1000; a2++){
+            testA[a2] = (char*)malloc(sizeof(char));  //call malloc funxtion
+            totalMalloc++;      //counts all mallocs in inner and outer loop
+            if(testA[a2] != NULL)  //checks that malloc function ran with no errors
+            {
+                countMalloc++;  //counts valid runs
             }
-            else if (cRandom >=51){
-                //if (){
-                //check for memory existing, true = free
-                //cFreeTotal++;
-                //}
-                //else if(){
-                //If no memory to free, malloc one bit instead
-                //cMallocTotal++;
-                //}
+            else{
+                countNull++;  //counts runs with errors
             }
         }
-        if (cFreeTotal < cMallocTotal){
-            c4 = cMallocTotal - cFreeTotal;
-            for (c3=c4; c3 > 0; c3--){
-                //free remaining blocks
-                cFreeTotal++;
-            }
+        for (a3 = countMalloc - 1; a3 >= 0; a3--){  //stepping backwards frees all valid mallocs
+            free(testA[a3]);
+            totalFree++;  //counts total free calls
         }
-        //timer of total time taken for each iteration of 100 test c
+        validMalloc = validMalloc + countMalloc;  //counts total number of valid malloc calls
+        //gettimeofday(&t1, 0);
+        //elapsed = (t1.tv_sec-t0.tv_sec)*1000000+t1.tv_usec-t0.tv_usec;
+        //total += elapsed;
     }
+    errCollect(0, 0, 0, 5, 1);
+    //average = total/100;
+    printf("\nTotal calls to malloc: %d\n", totalMalloc);
+    printf("Total valid calls to malloc: %d\n", validMalloc);
+    printf("Total calls to free: %d\n", totalFree);
+    //printf("Average time of execution: %lf ms.\n", average);
     
-    cTimeTotal = cTimeTotal/100;
-    printf("Total malloc calls: %d.  Total free calls: %d\n", cMallocTotal, cFreeTotal);
-    printf("Mean time for 100 executions: %d\n\n", cTimeTotal);
+    printf("\nTest B - (malloc then free * 1000) * 100...\n\n");
+    totalMalloc = 0, totalFree = 0, validMalloc = 0;
+    //average = 0;
+    //total = 0;
     
-    printf("Test D: random 1-64 byte malloc or free last...\n");
-    for (d1=0; d1 <= testRuns; d1++){
-        dBytesTotal = 0;
-        for (d2=0; d2 <= mallocRuns; d2++){
-            dRandomChoice = rand() % 100 + 1;
-            if (dRandomChoice <= 50){
-                dRandomSize = rand() % 64 + 1;
-                if (dBytesTotal + dRandomSize <= 1000){
-                    //malloc dRandomSize
-                    dBytesTotal = dBytesTotal + dRandomSize;
-                    dMallocTotal++;
+    for(a1 = 0; a1 < 100; a1++){
+        //gettimeofday(&t1, 0);
+        int countMalloc = 0;
+        for(a2 = 0; a2 < 1000; a2++){
+            testB[a2] = (char*)malloc(sizeof(char));  //call malloc
+            totalMalloc++;  //  Total calls
+            if(testB[a2] != NULL){  
+                countMalloc++;  //  Valid calls
+                free(testB[a2]);  //  Call free
+                totalFree++;  //  Total frees
+            }
+        }
+        validMalloc = validMalloc + countMalloc;
+        //gettimeofday(&t1, 0);
+        //elapsed = (t1.tv_sec-t0.tv_sec)*1000000+t1.tv_usec-t0.tv_usec;
+        //total += elapsed;
+    }
+    errCollect(0, 0, 0, 5, 1);
+    printf("\nTotal calls to malloc: %d\n", totalMalloc);
+    printf("Total valid calls to malloc: %d\n", validMalloc);
+    printf("Total calls to free: %d\n", totalFree);
+    //printf("Average time of execution: %lf ms.\n", average);
+    
+    printf("\nTest C - (random 1 byte malloc or free * 100) * 100...\n\n");
+    totalMalloc = 0, totalFree = 0, validMalloc = 0;
+    //average = 0;
+    //total = 0;
+    
+    for (a1 = 0; a1 < 100; a1++){
+        //gettimeofday(&t0, 0);
+        int countMalloc = 0, countFree = 0, leftover = 0, isMalloc = 0;
+        for (a2 = 0; countMalloc < 1000; a2++){
+            randomNum = rand() % 100 + 1; //random for free or malloc
+            if(randomNum <= 50){  //First random 1-50 then call malloc
+                testC[isMalloc] = (char*)malloc(sizeof(char));  //Call malloc
+                totalMalloc++;  //total malloc
+                isMalloc++; //there is a malloc
+            }
+            else{ //random 51-100 call free
+                if(isMalloc >= 1){  // check for a malloc, if call free
+                    isMalloc--;
+                    free(testC[isMalloc]); 
+                    totalFree++;
+                    countFree++;
+                }
+                else if(isMalloc < 1){ //  check for a malloc, if not call malloc
+                    testC[isMalloc] = (char*)malloc(sizeof(char));
+                    totalMalloc++;
+                    isMalloc++;
+                    totalSwap++; //total times a free was rolled but changed to malloc
+                }
+            }
+        }
+        leftover = (countMalloc - countFree);  //checks for more malloc calls then free
+        if(leftover > 0){
+            for(a3 = leftover - 1; a3 >= 0; a3--){ // runs free for any remaining malloc calls
+                free(testC[a3]);
+                totalFree++;
+            }
+        }
+        //gettimeofday(&t1, 0);
+        //elapsed = (t1.tv_sec-t0.tv_sec)*1000000+t1.tv_usec-t0.tv_usec;
+        //total += elapsed;
+    }
+    errCollect(0, 0, 0, 5, 1);
+    printf("\nTotal calls to malloc: %d\n", totalMalloc);
+    printf("Total calls to free: %d\n", totalFree);
+    printf("Total calls to free swapped to malloc: %d\n", totalSwap);
+    //printf("Average time of execution: %lf ms.\n", average);
+    
+    printf("\nTest D - (random *random* byte malloc or free * 100) * 100...\n\n");
+    totalMalloc = 0, totalFree = 0, validMalloc = 0;
+    //average = 0;
+    //total = 0;
+    for (a1 = 0; a1 < 100; a1++){
+        //gettimeofday(&t0, 0);
+        int countMalloc = 0, countNull = 0, countFree = 0, leftover = 0, isMalloc = 0;
+        for (a2 = 0; countMalloc < 1000; a2++){
+            randomNum = rand() % 100 + 1; //random for free or malloc
+            randomNum2 = rand() % 64 + 1; //random for 1-64 bytes requested
+            if(randomNum <= 50){  // first random 1-50 call malloc
+                testD[isMalloc] = (char*)malloc((int)randomNum2); //call malloc with value of random2
+                if(testD[isMalloc] != NULL)//checks for valid call
+                {
+                    isMalloc++;
+                    countMalloc++;
+                    totalMalloc++;
                 }
                 else{
-                    //free last pointer
-                    //dFreeTotal++
+                    countNull++; // counts invalid calls
+                }
+                totalBytes = totalBytes + randomNum2;//total bytes requested accross valid and invalid calls
+            }
+            else{//second random 51-100 call free
+                if(isMalloc >= 1){ //checks for malloc if free
+                    isMalloc--;
+                    free(testD[isMalloc]); // call free
+                    totalFree++;
+                    countFree++;
+                }
+                else if(isMalloc < 1){//checks for malloc if not call malloc
+                    testD[isMalloc] = (char*)malloc((int)randomNum2); //call malloc
+                    if(testD[isMalloc] != NULL)//check for valid malloc
+                    {
+                        isMalloc++;
+                        countMalloc++;
+                        totalMalloc++;
+                     }
+                     else{
+                        countNull++;
+                    }
+                    totalBytes = totalBytes + randomNum2;
+                    totalSwap++;//total times free called but malloc needed instead
                 }
             }
-            else if(dRandomChoice >= 50){
-                //if(){
-                    //check for existing memory, true = free last block
-                  //  dFreeTotal++;
-                //}
-                //else if(){
-                    //no memory to free
-                 //   dRandomSize = rand() % 64 + 1;
-                    //malloc dRandomSize
-                   // dBytesTotal = dBytesTotal + dRandomSize;
-                    //dMallocTotal++;
-                //}
-            }
-        dAllMTotal = dAllMTotal + dBytesTotal;
         }
-        if (dFreeTotal < dMallocTotal){
-            d4 = dMallocTotal - dFreeTotal;
-            for (d3=d4; d3 >0 ; d3--){
-                //free remaining blocks
-                dFreeTotal++;
+        leftover = (countMalloc - countFree);//clean up any additional mallocs not freed
+        if(leftover > 0){
+            for(a3 = leftover - 1; a3 >= 0; a3--){
+                free(testD[a3]);
+                totalFree++;
             }
         }
-        //timer of total time taken for each iteration of 100 test d
+        //gettimeofday(&t1, 0);
+        //elapsed = (t1.tv_sec-t0.tv_sec)*1000000+t1.tv_usec-t0.tv_usec;
+        //total += elapsed;
     }
-    dTimeTotal = dTimeTotal/100;
-    printf("Total malloc calls: %d.  Total free calls: %d\n", dMallocTotal, dFreeTotal);
-    printf("Total bytes assigned with malloc: %d\n", dAllMTotal);
-    printf("Total bytes freed: %d\n", dAllFTotal);
-    printf("Mean time for 100 executions: %d\n\n", dTimeTotal);
+    errCollect(0, 0, 0, 5, 1);
+    printf("\nTotal calls to malloc: %d\n", totalMalloc);
+    printf("Total bytes requested: %d\n", totalBytes);
+    printf("Total calls to free: %d\n", totalFree);
+    printf("Total calls to free swapped to malloc: %d\n", totalSwap);
+    //printf("Average time of execution: %lf ms.\n", average);
     
-    printf("Test E: malloc and free in byte increments from 1-1000...\n");
-    for (e1=0; e1 <= testRuns; e1++){
-        for (e2=0; e2 <= mallocRuns; e2++){
-        //assign malloc size of counter
-            eMallocTotal++;
-        //free size of counter
-            eFreeTotal++;
+    printf("\n\nTest E - (step bytes then free * 1000) * 100...\n\n");
+    totalMalloc = 0, totalFree = 0, validMalloc = 0;
+    
+    for(a1 = 0; a1 < 100; a1++){
+        //gettimeofday(&t0, 0);
+        int countMalloc = 0, countNull = 0;
+        for (a2 = 0; a2 < 1000; a2++){
+            testE[a2] = (char*)malloc(a2*sizeof(char));//call malloc stepping in size with counter
+            totalMalloc++;
+            if(testE[a2] != NULL){//checks for valid call
+                free(testE[a2]);//free
+                totalFree++;
+                validMalloc++;
+            }
+            else{
+                countNull++;
+            }
+            totalBytes = totalBytes + a2;
         }
-        //timer of total time taken for each iteration of 100 test a
-    } //Test a
-    eTimeTotal = eTimeTotal/100;
-    printf("Total malloc calls: %d.  Total free calls: %d\n", eMallocTotal, eFreeTotal);
-    printf("Mean time for 100 executions: %d\n\n", eTimeTotal);
+        validMalloc = validMalloc + countMalloc;
+        //gettimeofday(&t1, 0);
+        //elapsed = (t1.tv_sec-t0.tv_sec)*1000000+t1.tv_usec-t0.tv_usec;
+        //total += elapsed;
+    }
+    errCollect(0, 0, 0, 5, 1);
+    //average = total/100;
+    printf("\nTotal calls to malloc: %d\n", totalMalloc);
+    printf("Total valid calls to malloc: %d\n", validMalloc);
+    printf("Total bytes requested: %d\n", totalBytes);
+    printf("Total calls to free: %d\n", totalFree);
+    //printf("Average time of execution: %lf ms.\n", average);
     
-    printf("Test F: ...\n");
-    for (f1=0; f1 <= testRuns; f1++){
-        for (f2=0; f2 <= mallocRuns; f2++){
-        //assign malloc size of counter
-            fMallocTotal++;
-        //free size of counter
-            fFreeTotal++;
+    printf("\n\nTest F - (step byte malloc * 1000 then free * 1000) * 100...\n\n");
+    totalMalloc = 0, totalFree = 0, validMalloc = 0;
+    
+    for(a1 = 0; a1 < 100; a1++){
+        //gettimeofday(&t0, 0);
+        int countMalloc = 0, countNull = 0;
+        for (a2 = 1; a2 < 1001; a2++){
+            testF[a2] = (char*)malloc(a2 * sizeof(char));
+            totalMalloc++;
+            if(testF[a2] != NULL)
+            {
+                countMalloc++;
+            }
+            else{
+                countNull++;
+            }
         }
-        //timer of total time taken for each iteration of 100 test a
-    } //Test a
-    fTimeTotal = fTimeTotal/100;
-    printf("Total malloc calls: %d.  Total free calls: %d\n", fMallocTotal, fFreeTotal);
-    printf("Mean time for 100 executions: %d\n\n", fTimeTotal);
+        for (a3 = countMalloc; a3 >= 1; a3--){
+            free(testF[a3]);
+            totalFree++;
+        }
+        validMalloc = validMalloc + countMalloc;
+        //gettimeofday(&t1, 0);
+        //elapsed = (t1.tv_sec-t0.tv_sec)*1000000+t1.tv_usec-t0.tv_usec;
+        //total += elapsed;
+    }
+    errCollect(0, 0, 0, 5, 1);
+    //average = total/100;
+    printf("\nTotal calls to malloc: %d\n", totalMalloc);
+    printf("Total valid calls to malloc: %d\n", validMalloc);
+    printf("Total calls to free: %d\n", totalFree);
+    //printf("Average time of execution: %lf ms.\n", average);
     
-    return 0;
+    return 0;  
 }
