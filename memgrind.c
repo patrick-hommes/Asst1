@@ -97,6 +97,7 @@ int main(int argc, char * argv[]){
                 testC[isMalloc] = (char*)malloc(sizeof(char));  //Call malloc
                 totalMalloc++;  //total malloc
                 isMalloc++; //there is a malloc
+                countMalloc++;
             }
             else{ //random 51-100 call free
                 if(isMalloc >= 1){  // check for a malloc, if call free
@@ -109,6 +110,7 @@ int main(int argc, char * argv[]){
                     testC[isMalloc] = (char*)malloc(sizeof(char));
                     totalMalloc++;
                     isMalloc++;
+                    countMalloc++;
                     totalSwap++; //total times a free was rolled but changed to malloc
                 }
             }
