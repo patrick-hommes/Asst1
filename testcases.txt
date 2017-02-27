@@ -1,1 +1,16 @@
-Test Cases
+Test E and F are both stepping tests which will increment the size
+of data requested along with their respective for loop.
+
+Test E will request a malloc of size (loop counter).
+Test E will then free.
+It will do this 1000 times.
+
+Test F will request a malloc 1000 times of size (loop counter).
+Test F will then free 1000 times.
+
+These tests were included to show the handling of much larger byte
+size requests to malloc, if any change in time would be seen between
+similar tests like A and B where much smaller amounts of data were
+collected, and also in the case of Test F show how much faster the
+allocated memory fills up compared to test A when nothing is freed
+to allow for new requests.
